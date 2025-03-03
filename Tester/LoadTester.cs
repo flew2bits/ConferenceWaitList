@@ -17,7 +17,7 @@ public class LoadTester(
         ("b@example.com", "Bertrand"),
         ("c@example.com", "Carrie"),
         ("d@example.com", "Darius"),
-        ("e@example.com", "Emily"),
+        ("e@example.com", "Erika"),
         ("f@example.com", "Felicia"),
         ("g@example.com", "Gertrude"),
         ("h@example.com", "Harry"),
