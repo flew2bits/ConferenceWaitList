@@ -1,0 +1,132 @@
+﻿@page
+@model ConferenceBooking.Pages.Index
+
+@{
+}
+
+<h1>Conference Booking Sample</h1>
+
+<div class="modal fade" id="register-user-modal" data-post-endpoint="@Url.RouteUrl("RegisterUser")">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Register a New User</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <label for="register-username" class="form-label">Name</label>
+                    <input type="text" id="register-username" name="Name" class="form-control"/>
+                </div>
+                <div class="mb-2">
+                    <label for="register-email" class="form-label">Email</label>
+                    <input type="text" id="register-email" name="Email" class="form-control"/>
+                </div>
+                <input type="hidden" name="UserId" data-guid-from="#register-email" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reserve-seat-modal" data-post-endpoint="@Url.RouteUrl("ReserveSeat")"
+     data-context="ancestor::tr">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reserve a Seat for <span data-text-from="@@data-session-name"></span></h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <label for="reserve-username" class="form-label">User Name</label>
+                    <input type="text" id="reserve-username" name="UserName" class="form-control"/>
+                </div>
+                <input type="hidden" data-value-from="@@data-session-id" name="SessionId"/>
+                <input type="hidden" name="UserId" data-guid-from="#reserve-username" />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Reserve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="release-seat-modal" data-post-endpoint="@Url.RouteUrl("CancelReservation")"
+     data-context="ancestor::tr">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cancel a Reservation for <span data-text-from="@@data-session-name"></span></h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <label for="cancel-username" class="form-label">User Name</label>
+                    <input type="text" id="cancel-username" name="UserName" class="form-control"/>
+                </div>
+                <input type="hidden" data-value-from="@@data-session-id" name="SessionId"/>
+                <input type="hidden" data-guid-from="#cancel-username" name="UserId"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#register-user-modal">Register User</button>
+
+<form method="post" asp-page-handler="CreateSession">
+    <div class="mb-2">
+        <label class="form-label" for="session_title">Session Title</label>
+        <input class="form-control" name="Title" id="session_title"/>
+    </div>
+    <div class="mb-2">
+        <label class="form-label" for="session_seats">Seats</label>
+        <input class="form-control" name="Seats" id="session_seats" type="number" min="1"/>
+    </div>
+    <div class="mb-2">
+        <label class="form-label" for="session_start">Start</label>
+        <input class="form-control" name="StartTime" id="session_start" type="datetime-local"/>
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Seats</th>
+        <th>Reservations</th>
+        <th>Waitlist</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var session in Model.Sessions)
+    {
+        <tr data-session-id="@session.SessionId" data-session-name="@session.Name">
+            <td>@session.Name</td>
+            <td>@session.Seats</td>
+            <td>@session.Reservations</td>
+            <td>@session.WaitlistSize</td>
+            <td><button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#reserve-seat-modal">Reserve</button>
+                <button class="ms-2 btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#release-seat-modal">Cancel</button></td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="~/js/index.js"></script>
+    
+}
